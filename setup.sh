@@ -21,6 +21,17 @@ if ! curl -fsSL "$SCRIPT_DOWNLOAD_ROOT_URL/init-gpg.sh" | bash; then
     return 1
 fi
 
+# Install commit-msg hook to remove Co-authored-by lines
+echo "[Setup] Installing commit-msg hook..."
+HOOKS_DIR=".git/hooks"
+if [[ -d "$HOOKS_DIR" ]]; then
+    curl -fsSL "$SCRIPT_DOWNLOAD_ROOT_URL/commit-msg-hook.sh" -o "$HOOKS_DIR/commit-msg"
+    chmod +x "$HOOKS_DIR/commit-msg"
+    echo "[Setup] commit-msg hook installed"
+else
+    echo "[Setup] Warning: .git/hooks directory not found, skipping hook installation"
+fi
+
 # Security: Clear sensitive environment variables to prevent exposure to subsequent
 # commands in the Cloud agent "install" step (e.g., npm install). This protects
 # against malicious dependencies.
